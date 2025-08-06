@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 
 @Entity
@@ -15,15 +16,12 @@ public class Wallet {
 	
 	private double balance;
 
-	@OneToOne
-    private Users user;
-	
+		
 	public Wallet() {
 	}
 	
-	public Wallet(double balance, Users user) {
+	public Wallet(double balance) {
 	    this.balance = balance;
-	    this.user = user;
 	}
 
 	
@@ -43,13 +41,6 @@ public class Wallet {
 		this.balance = balance;
 	}
 
-	public Users getUser() {
-		return user;
-	}
-
-	public void setUser(Users user) {
-		this.user = user;
-	}
 	
     
 }

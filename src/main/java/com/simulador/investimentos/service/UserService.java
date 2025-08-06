@@ -17,16 +17,14 @@ public class UserService {
 	private final WalletRepository walletRepository;
 	
 	
+	
 	public UserService(UsersRepository usersRepository, WalletRepository walletRepository) {
-		super();
 		this.usersRepository = usersRepository;
 		this.walletRepository = walletRepository;
 	}
 
 
 	public Users criarUsuario(Users user) {
-	   Wallet wallet = new Wallet(1000.00, user); 
-	    user.setWallet(wallet);
 	    return usersRepository.save(user); 
 
 	   
