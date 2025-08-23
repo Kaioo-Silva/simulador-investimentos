@@ -6,21 +6,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.simulador.investimentos.dtos.QuoteResponseDTO;
-import com.simulador.investimentos.service.StockService;
+import com.simulador.investimentos.service.AssetService;
 
 @RestController
-@RequestMapping("/api/v1/stocks")
-public class StockController {
+@RequestMapping("/api/v1/assets") 
+public class AssetController {
 	
-	private final StockService stockService;
+	private final AssetService assetService;
 
-    public StockController(StockService stockService) {
-        this.stockService = stockService;
+    public AssetController(AssetService assetService) {
+        this.assetService = assetService;
     }
 
     @GetMapping("/{symbol}")
-    public QuoteResponseDTO getStock(@PathVariable String symbol) {
-        return stockService.getStockQuote(symbol);
+    public QuoteResponseDTO getAsset(@PathVariable String symbol) {
+        return assetService.getAssetData(symbol);
     }
 
+
+	
+	
+	
+	
 }

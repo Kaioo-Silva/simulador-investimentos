@@ -12,5 +12,6 @@ public interface BrapiClient {
 
 	  @GetMapping("/quote/{symbol}")
 	  QuoteResponseDTO getQuote(@PathVariable("symbol") String symbol);
+      
 	}
 

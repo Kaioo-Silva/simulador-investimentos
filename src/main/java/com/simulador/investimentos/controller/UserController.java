@@ -2,14 +2,18 @@ package com.simulador.investimentos.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.simulador.investimentos.entity.Users;
-import com.simulador.investimentos.repository.UsersRepository;
+import com.simulador.investimentos.dtos.UserRequestDTO;
+import com.simulador.investimentos.dtos.UserResponseDTO;
+import com.simulador.investimentos.entity.User;
+import com.simulador.investimentos.mappers.UserMapper;
 import com.simulador.investimentos.service.UserService;
 
 @RestController
@@ -17,20 +21,32 @@ import com.simulador.investimentos.service.UserService;
 public class UserController {
 	
 	private final UserService userService;
+	private final UserMapper userMapper;
 
-    public UserController(UserService repository) {
-        this.userService = repository;
+    public UserController(UserService userService, UserMapper userMapper) {
+        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @PostMapping
-    public Users createUser(@RequestBody Users user) {
-        return userService.criarUsuario(user);
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO) {
+    	UserResponseDTO userResponseDTO = userService.createUser(userRequestDTO);
+        return ResponseEntity.ok(userResponseDTO);
     }
 
     @GetMapping
-    public List<Users> getAllUsers() {
-        return userService.getAll();
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+    	List<UserResponseDTO> listOfAllUsers =userService.getAllUsers();
+        return ResponseEntity.ok(listOfAllUsers);
     }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> findUser(@PathVariable Long id){
+    	User user =userService.findUser(id);
+    	UserResponseDTO userResponseDTO = UserMapper.toUserResponseDTO(user);
+    	return ResponseEntity.ok(userResponseDTO);
+    }
+
 }
 
 

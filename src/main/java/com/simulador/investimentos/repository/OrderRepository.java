@@ -9,5 +9,5 @@ import com.simulador.investimentos.entity.Order;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-	 List<Order> findByUserId(Long userId);
+	 List<Order> findByWalletUserId(Long userId);
 }

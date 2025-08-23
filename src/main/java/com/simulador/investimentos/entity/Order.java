@@ -2,45 +2,55 @@ package com.simulador.investimentos.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 
 @Entity
+@Table(name="user_orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="order_id")
     private Long id;
 
     @ManyToOne
-    private Users user;
-
-    @ManyToOne
+    @JoinColumn(name = "asset_symbol")
     private Asset asset;
-
-    private Integer quantity;
-
+    
+    @ManyToOne
+    @JoinColumn(name = "user_wallet")
+    private Wallet wallet;
+    
     @Enumerated(EnumType.STRING)
     private OrderType type;
 
+    private Integer quantity;
+
     private Double priceAtExecution;
 
-    private LocalDateTime timestamp;
+    private LocalDateTime tradeTime;
+    
 
+    
     public Order() {}
 
-    public Order(Users user, Asset asset, Integer quantity, OrderType type, Double priceAtExecution) {
-        this.user = user;
+    public Order(Wallet wallet, Asset asset, Integer quantity, OrderType type, Double priceAtExecution) {
+        this.wallet = wallet;
         this.asset = asset;
         this.quantity = quantity;
         this.type = type;
         this.priceAtExecution = priceAtExecution;
-        this.timestamp = LocalDateTime.now();
+        this.tradeTime = LocalDateTime.now();
     }
 
 	public Long getId() {
@@ -51,12 +61,13 @@ public class Order {
 		this.id = id;
 	}
 
-	public Users getUser() {
-		return user;
+
+	public Wallet getWallet() {
+		return wallet;
 	}
 
-	public void setUser(Users user) {
-		this.user = user;
+	public void setWallet(Wallet wallet) {
+		this.wallet = wallet;
 	}
 
 	public Asset getAsset() {
@@ -91,12 +102,12 @@ public class Order {
 		this.priceAtExecution = priceAtExecution;
 	}
 
-	public LocalDateTime getTimestamp() {
-		return timestamp;
+	public LocalDateTime getTradeTime() {
+		return tradeTime;
 	}
 
-	public void setTimestamp(LocalDateTime timestamp) {
-		this.timestamp = timestamp;
+	public void setTradeTime(LocalDateTime tradeTime) {
+		this.tradeTime = tradeTime;
 	}
 
 }

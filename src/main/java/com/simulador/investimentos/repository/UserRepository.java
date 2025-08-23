@@ -3,10 +3,10 @@ package com.simulador.investimentos.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.simulador.investimentos.entity.Users;
+import com.simulador.investimentos.entity.User;
 
 
 @Repository
-public interface UsersRepository extends JpaRepository<Users, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
 }

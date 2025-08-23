@@ -42,3 +42,4 @@ application-*.yml
 
 ### Arquivos de Log ### 
 *.log
+/.apt_generated_tests/

@@ -1,37 +1,40 @@
 package com.simulador.investimentos.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "assets")
 public class Asset {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private String symbol; 
     private String name;
-    private Double currentPrice;
+    private Double price;
+   
+    
+    @OneToMany(mappedBy = "asset", cascade = CascadeType.ALL)
+    private List<Order> orders = new ArrayList<>();
 
+   
 
+    
     public Asset() {
     }
 
-    public Asset(String symbol, String name, Double currentPrice) {
-        this.symbol = symbol;
-        this.name = name;
-        this.currentPrice = currentPrice;
-    }
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+	public Asset(String symbol, String name, Double price, List<Order> orders) {
+		super();
+		this.symbol = symbol;
+		this.name = name;
+		this.price = price;
+		this.orders = orders;
 	}
 
 	public String getSymbol() {
@@ -50,12 +53,22 @@ public class Asset {
 		this.name = name;
 	}
 
-	public Double getCurrentPrice() {
-		return currentPrice;
+	public Double getPrice() {
+		return price;
 	}
 
-	public void setCurrentPrice(Double currentPrice) {
-		this.currentPrice = currentPrice;
+	public void setPrice(Double price) {
+		this.price = price;
 	}
+
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
+	
+	
 
 }
