@@ -39,8 +39,13 @@ public class UserService {
 	}
 
 	public User findUser(Long id) {
-		return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuário com id " + id +" Não existe"));
+		return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuário com id " + id +" não existe"));
 		
+	}
+	
+	public void deleteUser(Long id) {
+		User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id informado(" + id +") é inválido "));
+		userRepository.delete(user);
 	}
 
 	

@@ -3,6 +3,7 @@ package com.simulador.investimentos.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,12 +22,11 @@ import com.simulador.investimentos.service.UserService;
 public class UserController {
 	
 	private final UserService userService;
-	private final UserMapper userMapper;
 
-    public UserController(UserService userService, UserMapper userMapper) {
-        this.userService = userService;
-        this.userMapper = userMapper;
-    }
+
+    public UserController(UserService userService) {
+        this.userService = userService;}
+
 
     @PostMapping
     public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO) {
@@ -45,6 +45,12 @@ public class UserController {
     	User user =userService.findUser(id);
     	UserResponseDTO userResponseDTO = UserMapper.toUserResponseDTO(user);
     	return ResponseEntity.ok(userResponseDTO);
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUserById(@PathVariable Long id){
+    	userService.deleteUser(id);
+    	return ResponseEntity.noContent().build();
     }
 
 }
