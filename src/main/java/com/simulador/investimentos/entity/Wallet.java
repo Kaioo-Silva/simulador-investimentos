@@ -1,5 +1,6 @@
 package com.simulador.investimentos.entity;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -22,35 +23,33 @@ public class Wallet {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private Double balance;
-
+	private BigDecimal balance; // BIG DECIMAL
 
 	@OneToOne
-	@JoinColumn(name = "user_wallet")
-	@JsonBackReference
+	@JoinColumn(name = "user_id")
 	private User user;
+	
+	
+	@OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL)
+	private List<Position> positions;
 
 	@OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL)
 	private List<Order> orders;
 
-
 	public Wallet() {
 	}
 
-	public Wallet(double balance) {
-		
+	public Wallet(BigDecimal balance) {
+
 		this.balance = balance;
 	}
-	
 
-	public Wallet(double balance, User user, List<Order> orders) {
+	public Wallet(BigDecimal balance, User user, List<Order> orders) { // BIG DECIMAL
 		super();
 		this.balance = balance;
 		this.user = user;
 		this.orders = orders;
 	}
-
-
 
 	public Long getId() {
 		return id;
@@ -60,11 +59,11 @@ public class Wallet {
 		this.id = id;
 	}
 
-	public double getBalance() {
+	public BigDecimal getBalance() { // BIG DECIMAL
 		return balance;
 	}
 
-	public void setBalance(double balance) {
+	public void setBalance(BigDecimal balance) { // BIG DECIMAL
 		this.balance = balance;
 	}
 
@@ -83,7 +82,5 @@ public class Wallet {
 	public void setOrders(List<Order> orders) {
 		this.orders = orders;
 	}
-	
-	
 
 }

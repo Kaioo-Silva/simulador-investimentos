@@ -1,7 +1,10 @@
 package com.simulador.investimentos.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,11 +14,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 
 @Entity
-@Table(name="user_orders")
+@Table(name="orders")
 public class Order {
 
     @Id
@@ -31,25 +35,31 @@ public class Order {
     @JoinColumn(name = "user_wallet")
     private Wallet wallet;
     
+    @ManyToOne
+    @JoinColumn(name = "position_id")
+    private Position position;
+    
+    @OneToOne(mappedBy = "buyOrder", cascade = CascadeType.ALL)
+    private LotAllocation lotAllocation;
+    
+  
     @Enumerated(EnumType.STRING)
     private OrderType type;
-
     private Integer quantity;
-
-    private Double priceAtExecution;
-
+    private BigDecimal priceAtExecution; 
     private LocalDateTime tradeTime;
     
 
     
     public Order() {}
 
-    public Order(Wallet wallet, Asset asset, Integer quantity, OrderType type, Double priceAtExecution) {
+    public Order(Wallet wallet, Asset asset, Integer quantity, OrderType type, BigDecimal priceAtExecution, Position position) { 
         this.wallet = wallet;
         this.asset = asset;
         this.quantity = quantity;
         this.type = type;
         this.priceAtExecution = priceAtExecution;
+        this.position = position;
         this.tradeTime = LocalDateTime.now();
     }
 
@@ -94,11 +104,11 @@ public class Order {
 		this.type = type;
 	}
 
-	public Double getPriceAtExecution() {
+	public BigDecimal getPriceAtExecution() { 
 		return priceAtExecution;
 	}
 
-	public void setPriceAtExecution(Double priceAtExecution) {
+	public void setPriceAtExecution(BigDecimal priceAtExecution) { 
 		this.priceAtExecution = priceAtExecution;
 	}
 

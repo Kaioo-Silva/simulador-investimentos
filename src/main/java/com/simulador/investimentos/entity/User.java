@@ -1,6 +1,8 @@
 package com.simulador.investimentos.entity;
 
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -25,7 +27,6 @@ public class User {
 	private String name;
 	
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference
 	private Wallet wallet;
 	
 
@@ -35,7 +36,7 @@ public class User {
 	@PrePersist
 	public void prePersist() {
         if (this.wallet == null) {
-            this.wallet = new Wallet(1000.00);
+            this.wallet = new Wallet(new BigDecimal("1000.00"));
         }
         if (this.wallet.getUser() != this) {
             this.wallet.setUser(this);

@@ -23,11 +23,12 @@ public class AssetService {
 
 	public QuoteResponseDTO getAssetData(String symbol) {
 		return brapiClient.getQuote(symbol);
+		
 	}
 
-	public Asset findOrCreate(String symbol, String stockName, Double stockPrice) {
+	public Asset findOrCreate(String symbol, String stockName) {
 		return assetRepository.findById(symbol).orElseGet(() -> {
-			Asset newAsset = new Asset(symbol, stockName, stockPrice, new ArrayList<>());
+			Asset newAsset = new Asset(symbol, stockName, new ArrayList<>());
 			return assetRepository.save(newAsset);
 		});
 

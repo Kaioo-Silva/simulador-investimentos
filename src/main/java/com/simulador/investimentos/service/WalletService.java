@@ -1,5 +1,7 @@
 package com.simulador.investimentos.service;
 
+import java.math.BigDecimal;
+
 import org.springframework.stereotype.Service;
 
 import com.simulador.investimentos.entity.Wallet;
@@ -14,8 +16,11 @@ public class WalletService {
 		this.walletRepository = walletRepository;
 	}
 	
-	public Wallet saveUpdatedBalanceInWallet(Wallet wallet) {
+	public Wallet saveUpdatedBalance(Wallet wallet, BigDecimal userBalanceUpdated) { 
+		wallet.setBalance(userBalanceUpdated);
 		return walletRepository.save(wallet);
 	}
+	
+
 
 }

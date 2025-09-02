@@ -1,119 +1,132 @@
 package com.simulador.investimentos.service;
 
 import java.math.BigDecimal;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
-import com.simulador.investimentos.client.BrapiClient;
-import com.simulador.investimentos.dtos.OrderClosedDTO;
+
 import com.simulador.investimentos.dtos.OrderDTO;
 import com.simulador.investimentos.dtos.QuoteResponseDTO;
 import com.simulador.investimentos.entity.Asset;
 import com.simulador.investimentos.entity.Order;
 import com.simulador.investimentos.entity.OrderType;
+import com.simulador.investimentos.entity.Position;
 import com.simulador.investimentos.entity.User;
 import com.simulador.investimentos.entity.Wallet;
 import com.simulador.investimentos.exception.InsufficientBalanceException;
 import com.simulador.investimentos.exception.ResourceNotFoundException;
+import com.simulador.investimentos.mappers.OrderMapper;
 import com.simulador.investimentos.repository.OrderRepository;
 
 @Service
 public class OrderService {
 
 	private OrderRepository orderRepository;
-	private BrapiClient brapiClient;
 	private UserService userService;
 	private WalletService walletService;
 	private AssetService assetService;
+	private PositionService positionService;
+	private LotAllocationService lotAllocationService;
+	private OrderMapper orderMapper;
 
-	public OrderService(OrderRepository orderRepository, BrapiClient brapiClient, UserService userService,
-			WalletService walletService, AssetService assetService) {
+	public OrderService(OrderRepository orderRepository, UserService userService, WalletService walletService,
+			            AssetService assetService, PositionService positionService, LotAllocationService lotAllocationService, OrderMapper orderMapper) {
 		this.orderRepository = orderRepository;
-		this.brapiClient = brapiClient;
 		this.userService = userService;
 		this.walletService = walletService;
 		this.assetService = assetService;
+		this.positionService = positionService;
+		this.lotAllocationService = lotAllocationService;
+		this.orderMapper = orderMapper;
 	}
+	
 
-	public OrderDTO buy(Long id, String symbol, Integer quantity) {
+	public OrderDTO executeBuyOrder(Long id, String symbol, Integer quantity) {
 		User user = userService.findUser(id);
-		Double userBalance = user.getWallet().getBalance();
 		Wallet userWallet = user.getWallet();
-		Long walletId = userWallet.getId();
 
-		QuoteResponseDTO brapiStockData = brapiClient.getQuote(symbol);
-		String stockName = brapiStockData.results().get(0).shortName();
-		Double stockPrice = brapiStockData.results().get(0).regularMarketPrice();
+		QuoteResponseDTO brapiStockData = assetService.getAssetData(symbol);
+		String stockName = brapiStockData.results().get(0).shortName(); 
+		BigDecimal currentPrice = BigDecimal.valueOf(brapiStockData.results().get(0).regularMarketPrice()); 
+		
+		BigDecimal userUpdatedBalance  = debitUserBalance(userWallet.getBalance(), currentPrice, quantity); 
+		walletService.saveUpdatedBalance(userWallet, userUpdatedBalance); 
 
-		Double userBalanceUpdated = updateUserBalanceOrThrowInsufficientBalanceException(userBalance, stockPrice, quantity);
-		userWallet.setBalance(userBalanceUpdated);
-		walletService.saveUpdatedBalanceInWallet(userWallet);
-
-		Asset assetData = assetService.findOrCreate(symbol, stockName, stockPrice);
-
-		Order order = new Order(userWallet, assetData, quantity, OrderType.BUY, stockPrice);
-		orderRepository.save(order);
-
-		return new OrderDTO(order.getId(), symbol, walletId, order.getType(), order.getQuantity(),
+		Asset assetData = assetService.findOrCreate(symbol, stockName);
+		
+		Position position = positionService.createOrUpdatePosition(userWallet, assetData, quantity, currentPrice);		
+		positionService.savePosition(position);
+				
+	    Order order = createAndSaveOrder(userWallet, assetData, quantity, OrderType.BUY, currentPrice, position);
+	    
+		lotAllocationService.createFromBuyOrder(assetData, order,  position, quantity, currentPrice);
+				
+		return new OrderDTO(order.getId(), symbol, userWallet.getId(), order.getType(), order.getQuantity(),
 				            order.getPriceAtExecution(), order.getTradeTime());
 	}
-
-	public OrderClosedDTO sellOpenPosition(Long userId, Long orderId, Integer quantityStocksWishToSell) {
+	
+	
+	public OrderDTO executeSellOrder(Long userId, Long orderId, Integer quantityToSell) {
 		User user = userService.findUser(userId);
-		Double userWalletBalance = user.getWallet().getBalance(); 
 		Wallet userWallet = user.getWallet();
-		Long walletId = userWallet.getId();
-
-		Order order = orderRepository.findById(orderId)
-				.orElseThrow(() -> new ResourceNotFoundException("id da ordem informada não existe"));
+		BigDecimal userBalance = userWallet.getBalance();
+        Order order = findOrderById(orderId);
+        
+        Position position = positionService.findPosition(userWallet.getId(), order.getAsset().getSymbol()); 
+        lotAllocationService.validateAndConsumeForSell(order.getId(), quantityToSell);
+        positionService.removeFromPosition(userWallet.getId(), order.getAsset().getSymbol(), quantityToSell);
 		
-		if(quantityStocksWishToSell > order.getQuantity() ) {
-			throw new ResourceNotFoundException("Não é possível vender mais ações do que você possui");
-		}
-
-		QuoteResponseDTO brapiStockData = brapiClient.getQuote(order.getAsset().getSymbol());
-        Double stockPrice = brapiStockData.results().get(0).regularMarketPrice(); 
-
-		Double userBalanceBoughtOrder = order.getPriceAtExecution() * order.getQuantity(); 																					
-        Double balanceUpdated = updateUserBalanceClosingOrder(stockPrice, userBalanceBoughtOrder, quantityStocksWishToSell);
-
-		userWallet.setBalance(userWalletBalance + balanceUpdated);
-		walletService.saveUpdatedBalanceInWallet(userWallet);
-
-		Order orderClosed = new Order(userWallet, order.getAsset(), quantityStocksWishToSell, OrderType.SELL, stockPrice);
-		orderRepository.save(orderClosed);
-
-		String messageSucessOrder = "Ordem finalizada: " + quantityStocksWishToSell + " ações de " + orderClosed.getAsset().getName()
-				                    + " foram vendidas no valor de " + stockPrice;
-
-		return new OrderClosedDTO(orderClosed.getId(), orderClosed.getAsset().getSymbol(),
-				walletId, OrderType.SELL, quantityStocksWishToSell, stockPrice, orderClosed.getTradeTime(), messageSucessOrder);
+		QuoteResponseDTO brapiStockData = assetService.getAssetData(order.getAsset().getSymbol());
+        BigDecimal currentPrice = BigDecimal.valueOf(brapiStockData.results().get(0).regularMarketPrice()); 
+       
+        
+		BigDecimal profitOrLoss = currentPrice.multiply(BigDecimal.valueOf(quantityToSell)); 
+		BigDecimal userBalanceAfterSell = userBalance.add(profitOrLoss); 
+        walletService.saveUpdatedBalance(userWallet, userBalanceAfterSell);
+        
+		
+		Order orderClosed = createAndSaveOrder(userWallet, order.getAsset(), quantityToSell, OrderType.SELL, currentPrice, position);
+		return new OrderDTO(orderClosed.getId(), orderClosed.getAsset().getSymbol(), userWallet.getId(), OrderType.SELL,
+				quantityToSell, currentPrice, orderClosed.getTradeTime());
 	}
 
-	public Double updateUserBalanceOrThrowInsufficientBalanceException(Double userBalance, Double stockPrice,
-			Integer quantity) {
+	
+	
+	public Order createAndSaveOrder(Wallet wallet, Asset asset, Integer quantity, OrderType type, BigDecimal currentPrice, Position position) {
+		Order order = new Order(wallet, asset, quantity, type, currentPrice, position);
+		return orderRepository.save(order);
+	}
+	
 
-		Double stockPriceValue = stockPrice * quantity;
-		if (userBalance < stockPriceValue) {
+	public BigDecimal debitUserBalance(BigDecimal userBalance, BigDecimal currentPrice, 
+			Integer quantity) {
+           
+		BigDecimal total = currentPrice.multiply(BigDecimal.valueOf(quantity)); 
+		
+		if (userBalance.compareTo(total) < 0) {
 			throw new InsufficientBalanceException("Saldo insuficiente para operação");
 		}
-
-		BigDecimal stockPriceInBigDecimal = BigDecimal.valueOf(stockPriceValue);
-		BigDecimal userBalanceBeforeBuyBigDecimal = BigDecimal.valueOf(userBalance);
-		BigDecimal userBalanceUpdated = userBalanceBeforeBuyBigDecimal.subtract(stockPriceInBigDecimal);
-
-		return userBalanceUpdated.doubleValue();
+		
+		BigDecimal updatedBalance = userBalance.subtract(total);
+		return updatedBalance; 
 	}
 
-	public Double updateUserBalanceClosingOrder(Double stockPriceNow, Double userBalanceBoughtOrder,
-			Integer quantityStocksWishToSell) {
+	
+	
+	public Order findOrderById(Long id) {
+		return orderRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("id da ordem informada não existe"));
+	}
 
-		Double valueWishedToCloseOrder = stockPriceNow * quantityStocksWishToSell;
-		if (userBalanceBoughtOrder <= valueWishedToCloseOrder) {
-			return valueWishedToCloseOrder - userBalanceBoughtOrder;
-		}
-		if (userBalanceBoughtOrder > valueWishedToCloseOrder) {
-			return userBalanceBoughtOrder - valueWishedToCloseOrder;
-		}
-		return null;
+
+	public List<OrderDTO> getAllOrders() {
+		List<Order> orders = orderRepository.findAll();
+		List<OrderDTO> orderDTO = orderMapper.toGetAllUserResponseDTO(orders);
+		return orderDTO;
 	}
 
 }
+
+
+
+

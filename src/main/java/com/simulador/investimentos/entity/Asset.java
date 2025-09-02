@@ -7,6 +7,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -16,24 +17,24 @@ public class Asset {
     @Id
     private String symbol; 
     private String name;
-    private Double price;
-   
+    
     
     @OneToMany(mappedBy = "asset", cascade = CascadeType.ALL)
+    private List<LotAllocation> lotAllocation;
+
+    @OneToMany(mappedBy = "asset", cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
-
-   
-
     
-    public Asset() {
+    @OneToMany(mappedBy = "asset", cascade = CascadeType.ALL)
+	private List<Position> positions;
+
+    public Asset(){
     }
 
-
-	public Asset(String symbol, String name, Double price, List<Order> orders) {
+	public Asset(String symbol, String name, List<Order> orders) {
 		super();
 		this.symbol = symbol;
 		this.name = name;
-		this.price = price;
 		this.orders = orders;
 	}
 
@@ -53,13 +54,6 @@ public class Asset {
 		this.name = name;
 	}
 
-	public Double getPrice() {
-		return price;
-	}
-
-	public void setPrice(Double price) {
-		this.price = price;
-	}
 
 	public List<Order> getOrders() {
 		return orders;
