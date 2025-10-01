@@ -3,7 +3,6 @@ package com.simulador.investimentos.entity;
 
 import java.math.BigDecimal;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.simulador.investimentos.dtos.UserRequestDTO;
 import com.simulador.investimentos.dtos.UserResponseDTO;
 import com.simulador.investimentos.entity.User;
-import com.simulador.investimentos.exception.ResourceNotFoundException;
+import com.simulador.investimentos.exception.UserNotFoundException;
 import com.simulador.investimentos.mappers.UserMapper;
 import com.simulador.investimentos.repository.UserRepository;
 
@@ -25,7 +25,7 @@ public class UserService {
 	public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
 		User user = userMapper.toUserEntity(userRequestDTO);
 		userRepository.save(user);
-		UserResponseDTO userResponseDTO = UserMapper.toUserResponseDTO(user);
+		UserResponseDTO userResponseDTO = userMapper.toUserResponseDTO(user);
 		return userResponseDTO;
 
 	}
@@ -39,12 +39,12 @@ public class UserService {
 	}
 
 	public User findUser(Long id) {
-		return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuário com id " + id +" não existe"));
+		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
 		
 	}
 	
 	public void deleteUser(Long id) {
-		User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id informado(" + id +") é inválido "));
+		User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
 		userRepository.delete(user);
 	}
 

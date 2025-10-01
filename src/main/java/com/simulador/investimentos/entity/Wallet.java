@@ -3,7 +3,6 @@ package com.simulador.investimentos.entity;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -23,7 +22,7 @@ public class Wallet {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private BigDecimal balance; // BIG DECIMAL
+	private BigDecimal balance; 
 
 	@OneToOne
 	@JoinColumn(name = "user_id")
@@ -44,7 +43,7 @@ public class Wallet {
 		this.balance = balance;
 	}
 
-	public Wallet(BigDecimal balance, User user, List<Order> orders) { // BIG DECIMAL
+	public Wallet(BigDecimal balance, User user, List<Order> orders) { 
 		super();
 		this.balance = balance;
 		this.user = user;
@@ -59,11 +58,11 @@ public class Wallet {
 		this.id = id;
 	}
 
-	public BigDecimal getBalance() { // BIG DECIMAL
+	public BigDecimal getBalance() { 
 		return balance;
 	}
 
-	public void setBalance(BigDecimal balance) { // BIG DECIMAL
+	public void setBalance(BigDecimal balance) { 
 		this.balance = balance;
 	}
 

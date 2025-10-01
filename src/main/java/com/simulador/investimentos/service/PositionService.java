@@ -2,27 +2,41 @@ package com.simulador.investimentos.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.simulador.investimentos.dtos.PositionDTO;
 import com.simulador.investimentos.entity.Asset;
 import com.simulador.investimentos.entity.Position;
 import com.simulador.investimentos.entity.Wallet;
-import com.simulador.investimentos.exception.ResourceNotFoundException;
+import com.simulador.investimentos.exception.PositionNotFoundException;
+import com.simulador.investimentos.mappers.PositionMapper;
 import com.simulador.investimentos.repository.PositionRepository;
 
 @Service
 public class PositionService {
 
 	private PositionRepository positionRepository;
+	private PositionMapper positionMapper;
 
-	public PositionService(PositionRepository positionRepository) {
+	public PositionService(PositionRepository positionRepository, PositionMapper positionMapper) {
 		this.positionRepository = positionRepository;
+		this.positionMapper = positionMapper;
 	}
 
 	public Position findPosition(Long walletId, String assetSymbol) {
 		return positionRepository.findByWalletIdAndAssetSymbol(walletId, assetSymbol)
-				.orElseThrow(() -> new ResourceNotFoundException("Posição não encontrada para esse ativo"));
+				.orElseThrow(() -> new PositionNotFoundException());
+	}
+	
+	
+	public List<PositionDTO> getAllPositions(Long walletId) {
+
+		List<Position> positions = positionRepository.findAllByWalletId(walletId);
+		List<PositionDTO> positionsDTO = positionMapper.getAllPositionsDTO(positions);
+		return positionsDTO;
+
 	}
 
 	public Position savePosition(Position position) {
@@ -50,9 +64,10 @@ public class PositionService {
 		return position;
 	}
 
-	public void removeFromPosition(Long walletId, String assetSymbol, Integer quantityToSell) {
+	public void removeQuantityFromPosition(Long walletId, String assetSymbol, Integer quantityToSell) {
 		Position position = findPosition(walletId, assetSymbol);
 		position.setTotalQuantity(position.getTotalQuantity() - quantityToSell);
 		positionRepository.save(position);
 	}
+	
 }

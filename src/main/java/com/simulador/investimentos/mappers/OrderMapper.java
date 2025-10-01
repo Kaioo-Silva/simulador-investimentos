@@ -14,7 +14,7 @@ import com.simulador.investimentos.entity.OrderType;
 @Component
 public class OrderMapper {
 	
-	public static OrderDTO toOrderDTO(Order order) {
+	public OrderDTO toOrderDTO(Order order) {
 		
 		Long id = order.getId();
 		String assetSymbol = order.getAsset().getSymbol();
@@ -31,7 +31,7 @@ public class OrderMapper {
 	}
 
 	public List<OrderDTO> toGetAllUserResponseDTO(List<Order> orders) {
-		List<OrderDTO> orderDTO = orders.stream().map(OrderMapper::toOrderDTO).collect(Collectors.toList());
+		List<OrderDTO> orderDTO = orders.stream().map(this::toOrderDTO).collect(Collectors.toList());
 		return orderDTO;
 	}
 	}

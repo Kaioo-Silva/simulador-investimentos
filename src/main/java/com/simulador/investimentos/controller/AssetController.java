@@ -1,5 +1,6 @@
 package com.simulador.investimentos.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +20,8 @@ public class AssetController {
 	}
 
 	@GetMapping("/{symbol}")
-	public QuoteResponseDTO getAsset(@PathVariable String symbol) {
-		return assetService.getAssetData(symbol);
+	public ResponseEntity<QuoteResponseDTO> getAsset(@PathVariable String symbol) {
+		return ResponseEntity.ok(assetService.getAssetData(symbol));
 	}
 
 }

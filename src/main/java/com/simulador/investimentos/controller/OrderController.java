@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.simulador.investimentos.dtos.BuyRequestDTO;
 import com.simulador.investimentos.dtos.OrderDTO;
 import com.simulador.investimentos.dtos.SellOrderDTO;
@@ -22,9 +23,11 @@ import com.simulador.investimentos.service.OrderService;
 public class OrderController {
 	
 	private OrderService orderService;
+	private OrderMapper orderMapper;
 
-	public OrderController(OrderService orderService) {
+	public OrderController(OrderService orderService, OrderMapper orderMapper) {
 		this.orderService = orderService;
+		this.orderMapper = orderMapper;
 	}
 	
 	@PostMapping("/buy/{userId}")
@@ -44,7 +47,7 @@ public class OrderController {
 	@GetMapping("/{id}")
     public ResponseEntity<OrderDTO> findOrder(@PathVariable Long id){
     	Order order = orderService.findOrderById(id);
-    	OrderDTO orderDTO = OrderMapper.toOrderDTO(order);
+    	OrderDTO orderDTO = orderMapper.toOrderDTO(order);
     	return ResponseEntity.ok(orderDTO);
     }
 	

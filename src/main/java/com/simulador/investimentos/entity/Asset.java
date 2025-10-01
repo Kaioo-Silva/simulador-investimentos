@@ -7,7 +7,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -62,6 +61,7 @@ public class Asset {
 	public void setOrders(List<Order> orders) {
 		this.orders = orders;
 	}
+
 	
 	
 

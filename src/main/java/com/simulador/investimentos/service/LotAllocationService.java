@@ -8,7 +8,7 @@ import com.simulador.investimentos.entity.Asset;
 import com.simulador.investimentos.entity.LotAllocation;
 import com.simulador.investimentos.entity.Order;
 import com.simulador.investimentos.entity.Position;
-import com.simulador.investimentos.exception.InsufficientQuantityException;
+import com.simulador.investimentos.exception.InsufficientQuantityToSellException;
 import com.simulador.investimentos.exception.ResourceNotFoundException;
 import com.simulador.investimentos.repository.LotAllocationRepository;
 
@@ -21,10 +21,10 @@ public class LotAllocationService {
 		this.lotAllocationRepository = lotAllocationRepository;
 	}
 
-	public LotAllocation createFromBuyOrder(Asset asset, Order buyOrder, Position position, Integer quantity,
+	public LotAllocation createFromBuyOrder(Asset asset, Order buyOrder, Position position, Integer quantity, 
 			BigDecimal buyPrice) {
 
-		LotAllocation lot = new LotAllocation(asset, buyOrder, position, quantity, buyPrice);
+		LotAllocation lot = new LotAllocation(asset, buyOrder, position, quantity, buyPrice); //USAR ARGUMENTCAPTOR PQ CRIA OBJETO
 		return lotAllocationRepository.save(lot);
 	}
 
@@ -38,8 +38,7 @@ public class LotAllocationService {
 		LotAllocation lot = findLot(buyOrderId);
 
 		if (lot.getQuantity() < quantityToSell) {
-			throw new InsufficientQuantityException("Quantidade de ações insuficiente para venda. Você possui "
-				                                 	+ lot.getQuantity() + " ações disponíveis para vender desse lote.");
+			throw new InsufficientQuantityToSellException( lot.getQuantity());
 		}
 
 		lot.setQuantity(lot.getQuantity() - quantityToSell);

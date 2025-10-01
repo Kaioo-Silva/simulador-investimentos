@@ -11,27 +11,28 @@ import com.simulador.investimentos.entity.User;
 
 @Component
 public class UserMapper {
-	
+
 	public User toUserEntity(UserRequestDTO userRequestDTO) {
-		if(userRequestDTO == null) {
+		if (userRequestDTO == null) {
 			return null;
 		}
 		User user = new User(userRequestDTO.name(), null);
 		return user;
 	}
-	
-	public static UserResponseDTO toUserResponseDTO(User user) {
+
+	public UserResponseDTO toUserResponseDTO(User user) {
 
 		Long userId = user.getId();
 		String userName = user.getName();
 		Long userWalletId = user.getWallet().getId();
-		
-	 UserResponseDTO userResponseDTO = new UserResponseDTO(userId, userName, userWalletId);	
-	 return userResponseDTO;
+
+		UserResponseDTO userResponseDTO = new UserResponseDTO(userId, userName, userWalletId);
+		return userResponseDTO;
 	}
-	
-	public List<UserResponseDTO> toGetAllUserResponseDTO(List<User> users){
-		List<UserResponseDTO> userResponseDTO = users.stream().map(UserMapper::toUserResponseDTO).collect(Collectors.toList());
+
+	public List<UserResponseDTO> toGetAllUserResponseDTO(List<User> users) {
+		List<UserResponseDTO> userResponseDTO = users.stream().map(this::toUserResponseDTO)
+				.collect(Collectors.toList());
 		return userResponseDTO;
 	}
 

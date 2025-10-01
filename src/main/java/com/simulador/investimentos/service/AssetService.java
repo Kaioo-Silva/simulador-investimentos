@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 import com.simulador.investimentos.client.BrapiClient;
 import com.simulador.investimentos.dtos.QuoteResponseDTO;
 import com.simulador.investimentos.entity.Asset;
+import com.simulador.investimentos.exception.AssetNotFoundException;
 import com.simulador.investimentos.repository.AssetRepository;
+
+import feign.FeignException;
 
 @Service
 public class AssetService {
@@ -22,7 +25,12 @@ public class AssetService {
 	}
 
 	public QuoteResponseDTO getAssetData(String symbol) {
+		
+		try {
 		return brapiClient.getQuote(symbol);
+	} catch(FeignException.NotFound ex) {
+		throw new AssetNotFoundException();
+	}
 		
 	}
 

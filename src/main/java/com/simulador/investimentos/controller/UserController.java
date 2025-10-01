@@ -1,5 +1,6 @@
 package com.simulador.investimentos.controller;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.simulador.investimentos.dtos.UserRequestDTO;
 import com.simulador.investimentos.dtos.UserResponseDTO;
 import com.simulador.investimentos.entity.User;
@@ -22,16 +23,23 @@ import com.simulador.investimentos.service.UserService;
 public class UserController {
 	
 	private final UserService userService;
+	private final UserMapper userMapper;
 
 
-    public UserController(UserService userService) {
-        this.userService = userService;}
+    public UserController(UserService userService, UserMapper userMapper) {
+        this.userService = userService;
+        this.userMapper = userMapper;}
 
 
     @PostMapping
     public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO) {
     	UserResponseDTO userResponseDTO = userService.createUser(userRequestDTO);
-        return ResponseEntity.ok(userResponseDTO);
+    	URI location = ServletUriComponentsBuilder
+    	        .fromCurrentRequest()
+    	        .path("/{id}")
+    	        .buildAndExpand(userResponseDTO.id())
+    	        .toUri();
+        return ResponseEntity.created(location).body(userResponseDTO);
     }
 
     @GetMapping
@@ -43,7 +51,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> findUser(@PathVariable Long id){
     	User user =userService.findUser(id);
-    	UserResponseDTO userResponseDTO = UserMapper.toUserResponseDTO(user);
+    	UserResponseDTO userResponseDTO = userMapper.toUserResponseDTO(user);
     	return ResponseEntity.ok(userResponseDTO);
     }
     
