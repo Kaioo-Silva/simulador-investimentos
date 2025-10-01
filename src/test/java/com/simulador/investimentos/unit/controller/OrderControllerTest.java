@@ -241,7 +241,7 @@ public class OrderControllerTest {
 			    void should_Return_400_When_Insufficient_Quantity() throws Exception {
 			        Long userId = 5L;
 			        Integer userQuantity = 500;
-			        SellOrderDTO sellOrderDTO = new SellOrderDTO(1L, 1000); // tentando vender mais do que tem
+			        SellOrderDTO sellOrderDTO = new SellOrderDTO(1L, 1000); 
 			        String jsonBody = objectMapper.writeValueAsString(sellOrderDTO);
 
 			        doThrow(new InsufficientQuantityToSellException(userQuantity))

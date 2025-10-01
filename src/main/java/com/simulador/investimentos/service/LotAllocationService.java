@@ -24,7 +24,7 @@ public class LotAllocationService {
 	public LotAllocation createFromBuyOrder(Asset asset, Order buyOrder, Position position, Integer quantity, 
 			BigDecimal buyPrice) {
 
-		LotAllocation lot = new LotAllocation(asset, buyOrder, position, quantity, buyPrice); //USAR ARGUMENTCAPTOR PQ CRIA OBJETO
+		LotAllocation lot = new LotAllocation(asset, buyOrder, position, quantity, buyPrice); 
 		return lotAllocationRepository.save(lot);
 	}
 
