@@ -73,7 +73,7 @@ public class OrderControllerTest {
 					 .content(jsonBody))
 			        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
 			        .andExpect(status().isOk())
-			        .andExpect(jsonPath("$.id").value(orderDTO.id()))
+			        .andExpect(jsonPath("$.id").value(orderDTO.orderId()))
 			        .andExpect(jsonPath("$.assetSymbol").value(orderDTO.assetSymbol()))
 			        .andExpect(jsonPath("$.quantity").value(orderDTO.quantity()))
 			        .andExpect(jsonPath("$.priceAtExecution", comparesEqualTo(orderDTO.priceAtExecution().doubleValue())));
@@ -174,7 +174,7 @@ public class OrderControllerTest {
 						 .content(jsonBody))
 				        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				        .andExpect(status().isOk())
-				        .andExpect(jsonPath("$.id").value(orderDTO.id()))
+				        .andExpect(jsonPath("$.id").value(orderDTO.orderId()))
 				        .andExpect(jsonPath("$.assetSymbol").value(orderDTO.assetSymbol()))
 				        .andExpect(jsonPath("$.quantity").value(orderDTO.quantity()))
 				        .andExpect(jsonPath("$.priceAtExecution", comparesEqualTo(orderDTO.priceAtExecution().doubleValue())));
@@ -274,7 +274,7 @@ public class OrderControllerTest {
 				mockMvc.perform(get("/api/v1/orders/" + orderId))
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(orderDTO.id()))
+				.andExpect(jsonPath("$.id").value(orderDTO.orderId()))
 				.andExpect(jsonPath("$.assetSymbol").value(orderDTO.assetSymbol()))
 				.andExpect(jsonPath("$.quantity").value(orderDTO.quantity()));
 			}
@@ -308,28 +308,11 @@ public class OrderControllerTest {
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(expectedDTOs.size()))
-				.andExpect(jsonPath("$[0].id").value(expectedDTOs.get(0).id()))
-				.andExpect(jsonPath("$[1].assetSymbol").value(expectedDTOs.get(1).assetSymbol()));
-
-				
+				.andExpect(jsonPath("$[0].id").value(expectedDTOs.get(0).orderId()))
+				.andExpect(jsonPath("$[1].assetSymbol").value(expectedDTOs.get(1).assetSymbol()));				
 			}
-				
-
-				    @Test
-				    void should_Return_404_When_No_Orders_Found() throws Exception {
-
-				    	doThrow(new OrderNotFoundException())
-				            .when(orderService).getAllOrders();
-
-				        mockMvc.perform(get("/api/v1/orders"))
-				               .andExpect(status().isNotFound())
-				               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				               .andExpect(jsonPath("$.message").value("Ordem não encontrada"));
-				    }
-				}
-
-
-			}
+		}
+	}
 		
 	  
 

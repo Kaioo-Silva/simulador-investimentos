@@ -89,12 +89,12 @@ public class GlobalExceptionHandler {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseDTO);
 	}
 		
-		/*@ExceptionHandler(Exception.class)
+		@ExceptionHandler(Exception.class)
 		public ResponseEntity<ErrorResponseDTO> handleGeneralException(Exception exception) {
 		    ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
 		            HttpStatus.INTERNAL_SERVER_ERROR.value(),
 		            HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
 		            "Ocorreu um erro inesperado. Tente novamente mais tarde.");
 		    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponseDTO);
-		}*/
+		}
 }

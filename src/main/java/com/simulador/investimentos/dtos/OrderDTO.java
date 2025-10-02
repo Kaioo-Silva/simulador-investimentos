@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 import com.simulador.investimentos.entity.OrderType;
 
-public record OrderDTO(Long id, String assetSymbol, Long walletId, OrderType type, Integer quantity, BigDecimal priceAtExecution, LocalDateTime tradeTime) { 
+public record OrderDTO(Long orderId, String assetSymbol, Long walletId, OrderType type, Integer quantity, BigDecimal priceAtExecution, LocalDateTime tradeTime) { 
 	
 	}
 

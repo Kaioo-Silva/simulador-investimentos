@@ -136,7 +136,7 @@ class OrderServiceTest {
 			assertThat(result.assetSymbol()).isEqualTo(order.getAsset().getSymbol());
 			assertThat(result.walletId()).isEqualTo(user.getWallet().getId());
 			assertThat(result.quantity()).isEqualTo(order.getQuantity());
-			assertThat(result.id()).isEqualTo(order.getId());
+			assertThat(result.orderId()).isEqualTo(order.getId());
 			assertThat(result.type()).isEqualTo(order.getType());
 			assertThat(result.priceAtExecution()).isEqualTo(order.getPriceAtExecution());
 			assertThat(result.tradeTime()).isEqualTo(order.getTradeTime());
@@ -255,7 +255,7 @@ class OrderServiceTest {
 			assertThat(balanceArgumentCaptor.getValue().compareTo(userBalanceAfterSell)).isZero();
 
 			assertThat(result).isNotNull();
-			assertThat(result.id()).isEqualTo(expectedSellOrderResult.getId());
+			assertThat(result.orderId()).isEqualTo(expectedSellOrderResult.getId());
 			assertThat(result.assetSymbol()).isEqualTo(expectedSellOrderResult.getAsset().getSymbol());
 			assertThat(result.walletId()).isEqualTo(expectedSellOrderResult.getWallet().getId());
 			assertThat(result.type()).isEqualTo(expectedSellOrderResult.getType());
