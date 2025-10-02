@@ -47,4 +47,4 @@ A API está documentada com Swagger (OpenAPI 3.1).
 Acesse via navegador:
 http://localhost:8080/swagger-ui.html
 
-Ou baixe o arquivo openapi.json e importe em Postman, Insomnia ou outro de sua preferência.
+Ou baixe o arquivo api-docs.json e importe em Postman, Insomnia ou outro de sua preferência.
