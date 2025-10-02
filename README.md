@@ -37,7 +37,7 @@ API REST para simulação de investimentos em ações, com integração a API da
    
 
 2. Suba a aplicação com Docker Compose:
-3. 
+ 
 docker-compose up --build
 
 📚 Documentação da API
