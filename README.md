@@ -25,7 +25,7 @@ API REST para simulação de investimentos em ações, com integração a API da
 ## 🚀 Como rodar
 
 ### ✅ Requisitos
-
+- **Maven** instalado
 - [Docker](https://www.docker.com/) instalado
 
 ### ▶️ Executar com Docker
@@ -35,8 +35,12 @@ API REST para simulação de investimentos em ações, com integração a API da
    git clone https://github.com/Kaioo-Silva/simulador-investimentos.git
    cd simulador-investimentos
    
+2. Gere o JAR do projeto:
 
-2. Suba a aplicação com Docker Compose:
+mvn clean package -DskipTests
+
+
+3. Suba a aplicação com Docker Compose:
  
 docker-compose up --build
 
