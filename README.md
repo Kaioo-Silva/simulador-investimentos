@@ -35,10 +35,9 @@ API REST para simulação de investimentos em ações, com integração a API da
    git clone https://github.com/Joaoo-Silva/simulador-investimentos.git
    cd simulador-investimentos
    
-2. Compile o projeto para gerar o .jar:
-    ./mvnw clean package
 
-3. Suba a aplicação com Docker Compose:
+2. Suba a aplicação com Docker Compose:
+3. 
 docker-compose up --build
 
 📚 Documentação da API
