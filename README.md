@@ -32,7 +32,7 @@ API REST para simulação de investimentos em ações, com integração a API da
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/Joaoo-Silva/simulador-investimentos.git
+   git clone https://github.com/Kaioo-Silva/simulador-investimentos.git
    cd simulador-investimentos
    
 
