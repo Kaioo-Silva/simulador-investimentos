@@ -1,8 +1,7 @@
-version: "3.8"
 services:
   app:
     build: .
     ports:
       - "8080:8080"
-    env_file:	
-      - .env
+    environment:
+      BRAPI_TOKEN: bBHABELvRWH8gkkkpQpx8H
