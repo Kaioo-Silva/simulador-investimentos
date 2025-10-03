@@ -36,10 +36,7 @@ build/
 ### Arquivos sensíveis e de configuração ###
 .env
 *.env
-application.properties
-application.yml
-application-*.properties
-application-*.yml
+
 
 ### Arquivos de Log ### 
 *.log
